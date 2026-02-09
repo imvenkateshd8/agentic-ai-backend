@@ -53,8 +53,9 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:4200",   # Angular dev
+        "http://localhost:4200",
         "https://agentic-ai-backend-production-830d.up.railway.app",
+        "https://agentic-ai-frontend-rose.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],          # IMPORTANT for OPTIONS

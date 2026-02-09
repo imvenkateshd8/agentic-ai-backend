@@ -2,6 +2,8 @@ from fastapi import APIRouter, Request, UploadFile, File, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 import uuid
+from fastapi.responses import StreamingResponse
+import asyncio
 
 from tools.rag import ingest_pdf
 
@@ -50,6 +52,31 @@ async def chat(req: ChatRequest, request: Request):
         sources=result["sources"],
     )
 
+
+# -----------------------
+# Chat Stream Endpoint
+# -----------------------
+
+@router.post("/chat/stream")
+async def chat_stream(req: ChatRequest, request: Request):
+    thread_id = req.thread_id or str(uuid.uuid4())
+    chat_service = request.app.state.chat_service
+
+    async def event_generator():
+        async for chunk in chat_service.stream(req.message, thread_id):
+            yield f"data: {chunk}\n\n"
+            await asyncio.sleep(0)
+
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+        },
+    )
 
 # -----------------------
 # Upload PDF Endpoint

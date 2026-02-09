@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
 
 from llm.base import get_llm
 from graph.factory import build_async_graph
@@ -47,6 +48,18 @@ app = FastAPI(
     title="Agentic AI App",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:4200",   # Angular dev
+        "https://agentic-ai-backend-production-830d.up.railway.app",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],          # IMPORTANT for OPTIONS
+    allow_headers=["*"],          # IMPORTANT for SSE
+    expose_headers=["*"],         # REQUIRED for streaming
 )
 
 register_routes(app)

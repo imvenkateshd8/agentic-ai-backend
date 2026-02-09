@@ -8,3 +8,22 @@ wheels/
 
 # Virtual environments
 .venv
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Environment variables
+.env
+
+# Databases
+chatbot.db
+chatbot.db-shm
+chatbot.db-wal
+
+# RAG persistent storage (generated data)
+rag_store/
+
+# OS / editor
+.DS_Store
+.vscode/
